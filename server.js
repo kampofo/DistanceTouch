@@ -1,34 +1,29 @@
 const express = require("express");
 const { join } = require("path");
 const app = express();
+const mysql = require("mysql");
+const cors = require("cors");
 
-app.get("/api/patients", (req, res) => {
-	const patients = [
-		{
-			id: 1,
-			name: "john",
-			age: 10,
-		},
-		{
-			id: 2,
-			name: "bill",
-			age: 10,
-		},
-		{
-			id: 3,
-			name: "bob",
-			age: 10,
-		},
-		{
-			id: 4,
-			name: "steve",
-			age: 10,
-		},
-	];
+app.use(cors());
+app.use(express.json());
 
-	res.json(patients);
+const db = mysql.createConnection({
+  user: "root",
+  host: "localhost",
+  password: "root",
+  database: "Project455",
 });
 
-app.listen("5000", () => {
-	console.log("App listening on port 5000");
+app.get("/api/patients", (req, res) => {
+	db.query("SELECT * FROM Appointments", (err, result) => {
+	  if (err) {
+		console.log(err);
+	  } else {
+		res.send(result);
+	  }
+	});
+  });
+
+app.listen("3001", () => {
+	console.log("App listening on port 3001");
 });
