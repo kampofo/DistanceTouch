@@ -33,46 +33,34 @@ function Home(){
 export default Home;
 =======
 import { useState } from "react";
-import Axios from "axios";
+import {Route} from 'react-router-dom'
+import { useHistory } from "react-router-dom";
+import Button from 'react-bootstrap/Button';
+import './Home.css'
+import logo from './PennMedicineLogo.png'
 
 function Home() {
-  const [ID, setID] = useState("");
-  const [Fname, setFname] = useState("");
-  const [Lname, setLname] = useState("");
-  const [DOB, setDOB] = useState("");
-  const [Date, setDate] = useState("");
-  const [Time, setTime] = useState("");
-  const [Status, setStatus] = useState("");
 
+  const history = useHistory();
 
-  const [data, setData] = useState([]);
-
-  const getData = () => {
-    Axios.get("http://localhost:3001/api/patients").then((response) => {
-      setData(response.data);
-    });
+  const goCheckin = () => {
+    history.push("/Checkin");
   };
 
+  const goEmployee = () => {
+    history.push("/Employee");
+  };
+
+  
+
   return (
-    <div className="App">
-
-      <div className="employees">
-        <button onClick={getData}>Show Data</button>
-
-        {data.map((val, key) => {
-          return (
-            <div className="employee">
-              <h3>ID: {val.ID}</h3>
-              <h3>Fname: {val.Fname}</h3>
-              <h3>Lname: {val.Lname}</h3>
-              <h3>DOB: {val.DOB}</h3>
-              <h3>Date: {val.Date}</h3>
-              <h3>Time: {val.Time}</h3>
-              <h3>Status: {val.Status}</h3>
-            </div>
-          );
-        })}
-      </div>
+    <div>
+    <div class="vertical-center">
+      <Button onClick={goCheckin} size="lg" variant="primary" className="btn-primary">Checking in?</Button>
+    </div>
+    <div class='logo-vert' style={{display: 'flex', alignItems: 'center', justifyContent: 'center',}}>
+    <img src={logo} alt=""/>
+    </div>
     </div>
   );
 }

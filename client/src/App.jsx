@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
 
 // pages
@@ -10,7 +11,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <h1>FRONTEND</h1>
         <Switch>
           <Route exact path="/" component={Home}/>
           <Route exact path="/Employee" component={Employee}/>
