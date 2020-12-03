@@ -56,6 +56,8 @@ function Employee() {
     { key: 'Time', name: 'Time' },
     { key: 'DOB', name: 'DOB' },
     { key: 'Status', name: 'Status' },
+    { key: 'Category', name: 'Category' },
+
   ];
 
   const checkoutPatient = () => {
