@@ -40,6 +40,7 @@ const db = mysql.createConnection({
 	password: "root",
 	database: "Project455",
   });
+});
 
 app.get("/api/login", (req, res) => {
 	if (req.session.user) {
@@ -47,8 +48,7 @@ app.get("/api/login", (req, res) => {
 	} else {
 		res.send({ loggedIn: false });
 	}
-});
-
+  
 app.post("/api/login", (req, res) => {
 	const Pin = req.body.Pin;
 	const Password = req.body.Password;
@@ -80,7 +80,9 @@ app.post("/api/insert", (req, res) => {
 	const Date = req.body.Date;
 	const Time = req.body.Time;
 	const Status = req.body.Status;
-	db.query("INSERT into Appointments (Fname, Lname, DOB, Date, Time, Status) VALUES (?, ?, ?, ?, ?, ?)", [Fname, Lname, DOB, Date, Time, Status], (err, result) => {
+	const Category = req.body.Category;
+
+	db.query("INSERT into Appointments (Fname, Lname, DOB, Date, Time, Status, Category, PatientID) VALUES (?, ?, ?, ?, ?, ?, ?, (Select PatientID from patients where Fname=? and Lname=? and DOB=?))", [Fname, Lname, DOB, Date, Time, Status, Category, Fname, Lname, DOB], (err, result) => {
 		if (err) {
 		console.log(err);
 		} else {
@@ -88,6 +90,36 @@ app.post("/api/insert", (req, res) => {
 		}
 	});
 });
+
+app.post("/api/log", (req, res) => {
+	const Fname = req.body.Fname;
+	const Lname = req.body.Lname;
+	const DOB = req.body.DOB;
+	db.query("INSERT INTO patients (Fname, Lname, DOB) SELECT * FROM (SELECT ?, ?, ?) AS tmp WHERE NOT EXISTS (SELECT Fname, Lname, DOB FROM patients WHERE Fname = ? and Lname = ? and DOB = ?) LIMIT 1;", [Fname, Lname, DOB, Fname, Lname, DOB], (err, result) => {
+		if (err) {
+		console.log(err);
+		} else {
+		res.send('values inserted');
+		}
+	});
+});
+
+app.post("/api/localize", (req, res) => {
+	const Fname = req.body.Fname;
+	const Lname = req.body.Lname;
+	const Time = req.body.Time;
+	const Message = req.body.Message;
+	const Category = req.body.Category;
+	db.query("INSERT INTO cardiologist (Fname) VALUES ('fuck this');", (err, result) => {
+		if (err) {
+		console.log(err);
+		} else {
+		res.send('values inserted');
+		}
+	});
+});
+
+
 
 // read all patient data
 app.get("/api/patients", (req, res) => {
@@ -99,6 +131,8 @@ app.get("/api/patients", (req, res) => {
 	  }
 	});
 });
+
+
 
 app.put("/api/update", (req, res) => {
 
