@@ -4,19 +4,73 @@ const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+app.use(express.json());
+
+app.use(
+	cors({
+	  origin: ["http://localhost:3000"],
+	  methods: ["GET", "POST"],
+	  credentials: true,
+	})
+);
+
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended:true}));
+
+app.use(
+	session({
+		key: "userId",
+		secret: "distancetouch",
+		resave: false,
+		saveUninitialized: false,
+		cookie: {
+			secure: false,
+			expires: 60 * 60 * 24,
+		},
+	})
+);
 
 
 const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "password",
-  database: "Project455",
+	user: "root",
+	host: "localhost",
+	password: "password",
+	database: "Project455",
+  });
+
+app.get("/api/login", (req, res) => {
+	if (req.session.user) {
+		res.send({ loggedIn: true, user: req.session.user });
+	} else {
+		res.send({ loggedIn: false });
+	}
 });
 
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended:true}));
+app.post("/api/login", (req, res) => {
+	const Pin = req.body.Pin;
+	const Password = req.body.Password;
 
+	// console.log(Pin, Password);
+	db.query(
+		"SELECT * FROM Employees WHERE Pin = ? AND Password = ?", 
+		[Pin, Password],
+		(err, result) => {
+			if(err){
+				res.send({err: err});
+			}
+			
+			if (result.length > 0) {
+				req.session.user = result;
+				console.log(req.session.user);
+				res.send(result);
+			} else {
+				res.send({message: "Wrong Pin/Password combination!"});
+			}
+		});
+});
 
 // create new patient data
 app.post("/api/insert", (req, res) => {

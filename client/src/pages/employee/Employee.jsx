@@ -1,10 +1,10 @@
 import React from 'react';
 import { useInput, useState, useEffect, useMemo } from "react";
 import Axios from "axios";
-import { DateRangePicker } from 'react-date-range';
+// import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-import DataGrid from 'react-data-grid';
+// import DataGrid from 'react-data-grid';
 import 'react-data-grid/dist/react-data-grid.css';
 
 
@@ -15,12 +15,25 @@ function Employee() {
   const [lastName, setlastName] = useState("");
   const [patientsList, setPatientsList] = useState([]);
 
+  const [role, setRole] = useState("");
+
+  Axios.defaults.withCredentials = true;
+
   useEffect(() => {
-    (async () => {
-      const result = await Axios("http://localhost:3001/api/patients");
-      setPatientsList(result.data);
-    })();
+    Axios.get("http://localhost:3001/api/login").then((response) => {
+      if (response.data.loggedIn == true) {
+        console.log(response.data.user[0].Role);
+      }
+    });
   }, []);
+
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const result = await Axios("http://localhost:3001/api/patients");
+  //     setPatientsList(result.data);
+  //   })();
+  // }, []);
 
   // useEffect(() => {
   //   Axios.get("http://localhost:3001/api/patients").then((response) => {
@@ -70,31 +83,34 @@ function Employee() {
 
   return (
     <div>
-      <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>Welcome employee!</h1>
-      <DataGrid className='rdg-light'
-        columns={columns}
-        rows={patientsList}
-      />
-      <h4>Check Patient Out</h4>
-      <form onSubmit={checkoutPatient}>
-        <label>
-          First Name:
+      <h1>{role}</h1>
+      {/* <div>
+        <h1 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', }}>Welcome employee!</h1>
+        <DataGrid className='rdg-light'
+          columns={columns}
+          rows={patientsList}
+        />
+        <h4>Check Patient Out</h4>
+        <form onSubmit={checkoutPatient}>
+          <label>
+            First Name:
         <input
-            type="text"
-            value={firstName}
-            onChange={e => setfirstName(e.target.value)}
-          />
-        </label>
-        <label>
-          Last Name:
+              type="text"
+              value={firstName}
+              onChange={e => setfirstName(e.target.value)}
+            />
+          </label>
+          <label>
+            Last Name:
         <input
-            type="text"
-            value={lastName}
-            onChange={e => setlastName(e.target.value)}
-          />
-        </label>
-        <button>Delete</button>
-      </form>
+              type="text"
+              value={lastName}
+              onChange={e => setlastName(e.target.value)}
+            />
+          </label>
+          <button>Delete</button>
+        </form>
+      </div> */}
     </div>
   );
 }
